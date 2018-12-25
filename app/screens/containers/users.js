@@ -21,7 +21,7 @@ class Users extends Component {
             title: 'Users',
             headerRight: (
                 <Button
-                    onPress={navigation.getParam('onAddNewSong')}
+                    onPress={navigation.getParam('onAddNewUser')}
                     title="Add new"
                     color="rgb(13,99,255)"
                 />
@@ -38,19 +38,19 @@ class Users extends Component {
 
     componentDidMount() {
         this.props.getUsers();
-        this.props.navigation.setParams({ onAddNewSong: this.onAddNewSong });
+        this.props.navigation.setParams({ onAddNewUser: this.onAddNewUser });
     }
 
-    onAddNewSong = () => {
-        this.props.navigation.navigate('addNewSong');
+    onAddNewUser = () => {
+        this.props.navigation.navigate('onAddNewUser');
     };
 
     renderItem = ({item, index}) => {
         return(
             <TouchableOpacity style={styles.rowContainer}
-                              onPress={()=>this.props.navigation.navigate('userDetails')}
+                              onPress={()=>this.props.navigation.navigate('userDetails',{userDetails: item})}
                   key={index}>
-                <Text>
+                <Text style={styles.titleText}>
                     {item.name}
                 </Text>
             </TouchableOpacity>
@@ -107,7 +107,6 @@ const styles = StyleSheet.create({
     },
     titleText: {
         fontSize: Constant.fontSize.small,
-        alignSelf: 'center',
         marginBottom: 20
     },
     rowContainer: {

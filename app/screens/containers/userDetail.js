@@ -7,83 +7,55 @@
  */
 
 import React, {Component} from 'react';
-import {FlatList, StyleSheet, Text, View, Button} from 'react-native';
+import {FlatList, StyleSheet, Text, View, Linking} from 'react-native';
 import { connect } from 'react-redux';
-import { getUsers } from "../../actions/user";
 import Constant from '../../helper/themeHelper';
-
 
 class UserDetails extends Component {
 
     static navigationOptions = ({ navigation }) => {
         return {
-            //headerTitle: <LogoTitle />,
-            title: 'Users',
-            headerRight: (
-                <Button
-                    onPress={navigation.getParam('onAddNewSong')}
-                    title="Add new"
-                    color="rgb(13,99,255)"
-                />
-            ),
+            title: 'User Details',
         };
     };
 
     constructor(props){
         super(props);
         this.state={
-            refreshing: false
+            userDetails: props.navigation.state.params.userDetails
         }
     }
 
     componentDidMount() {
-        this.props.getUsers();
-        this.props.navigation.setParams({ onAddNewSong: this.onAddNewSong });
     }
 
-    onAddNewSong = () => {
-        this.props.navigation.navigate('addNewSong');
-    };
+    onLinkPress = () => {
+        const {website} = this.state.userDetails;
+        Linking.canOpenURL(website).then(supported => {
+            if (!supported) {
+                console.log('Can\'t handle url: ' + website);
+            } else {
+                return Linking.openURL(website).then(res=>{
 
-    renderItem = ({item, index}) => {
-        return(
-            <View style={styles.rowContainer}
-                  key={index}>
-                <Text>
-                    {item.name}
-                </Text>
-            </View>
-        )
-    };
+                }).catch(err=>{
 
-    keyExtractor = (item) => {
-        return item.id + "";
-    };
-
-    renderSeparator = ({leadingItem, section})=>{
-        return <View style={{height:10}}/>;
-    };
-
-    renderEmpty = () => {
-        return <View style={{flex:1, alignItems:'center', justifyContent:'center'}}>
-            <Text style={{fontSize:15}}>
-                {"No data found"}
-            </Text>
-        </View>
-    };
-
-    onRefresh = () => {
-        this.setState({refreshing: true});
-        this.props.getUsers().then(res=>{
-            this.setState({refreshing: false});
-        });
+                });
+            }
+        }).catch(err => console.error('An error occurred', err));
     };
 
     render() {
+        const { name, email, username, address, phone, website,  company} = this.state.userDetails;
         return (
             <View style={styles.container}>
-                <Text>
-                    User Details
+                <Text style={styles.titleText}>
+                    {name}
+                </Text>
+                <Text style={styles.titleText}>
+                    {email}
+                </Text>
+                <Text style={styles.linkText} onPress={this.onLinkPress}>
+                    {website}
                 </Text>
             </View>
         );
@@ -93,21 +65,18 @@ class UserDetails extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: Constant.appColor
+        backgroundColor: Constant.appColor,
+        padding: 10
     },
     titleText: {
+        fontSize: Constant.fontSize.medium,
+        alignSelf: 'center',
+        marginBottom: 10
+    },
+    linkText:{
         fontSize: Constant.fontSize.small,
         alignSelf: 'center',
-        marginBottom: 20
-    },
-    rowContainer: {
-        borderWidth: 1,
-        borderColor: '#bdbdbd',
-        borderRadius: 5,
-        justifyContent:'center',
-        padding: 20,
-        marginLeft: 10,
-        marginRight: 10,
+        color: Constant.blueColor
     }
 });
 
@@ -119,5 +88,4 @@ const mapStateToProps = state => {
 };
 
 export default connect(mapStateToProps,{
-    getUsers
 })(UserDetails);
