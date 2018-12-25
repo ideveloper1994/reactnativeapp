@@ -7,11 +7,10 @@
  */
 
 import React, {Component} from 'react';
-import {FlatList, StyleSheet, Text, View, Linking} from 'react-native';
-import { connect } from 'react-redux';
+import {StyleSheet, Text, View, Linking} from 'react-native';
 import Constant from '../../helper/themeHelper';
 
-class UserDetails extends Component {
+export default class UserDetails extends Component {
 
     static navigationOptions = ({ navigation }) => {
         return {
@@ -24,9 +23,6 @@ class UserDetails extends Component {
         this.state={
             userDetails: props.navigation.state.params.userDetails
         }
-    }
-
-    componentDidMount() {
     }
 
     onLinkPress = () => {
@@ -79,13 +75,3 @@ const styles = StyleSheet.create({
         color: Constant.blueColor
     }
 });
-
-const mapStateToProps = state => {
-    const {userList} = state.user;
-    return {
-        userList
-    };
-};
-
-export default connect(mapStateToProps,{
-})(UserDetails);
